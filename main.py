@@ -1,9 +1,9 @@
 from flask import Flask, request, jsonify
-import openai
+from openai import OpenAI
 import os
 
 app = Flask(__name__)
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 @app.route("/")
 def home():
@@ -16,12 +16,12 @@ def generate_reflection():
 
     prompt = f"Give a short 2-sentence Catholic reflection for the verse: {verse}"
 
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model="gpt-4",
         messages=[{"role": "user", "content": prompt}]
     )
 
-    reflection = response['choices'][0]['message']['content']
+    reflection = response.choices[0].message.content
     return jsonify({"reflection": reflection})
 
 if __name__ == "__main__":
