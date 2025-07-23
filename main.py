@@ -1,9 +1,9 @@
 from flask import Flask, request, jsonify
-from openai import OpenAI
+import openai
 import os
 
 app = Flask(__name__)
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @app.after_request
 def after_request(response):
@@ -22,19 +22,18 @@ def generate_reflection():
         data = request.json
         if not data:
             return jsonify({"error": "No JSON data provided"}), 400
-        
-        verse = data.get("verse", "Be still and know that I am God. - Psalm 46:10")
 
+        verse = data.get("verse", "Be still and know that I am God. - Psalm 46:10")
         prompt = f"Give a short 2-sentence Catholic reflection for the verse: {verse}"
 
-        response = client.chat.completions.create(
+        response = openai.ChatCompletion.create(
             model="gpt-4",
             messages=[{"role": "user", "content": prompt}]
         )
 
-        reflection = response.choices[0].message.content
+        reflection = response.choices[0].message['content']
         return jsonify({"reflection": reflection})
-    
+
     except Exception as e:
         return jsonify({"error": f"Failed to generate reflection: {str(e)}"}), 500
 
