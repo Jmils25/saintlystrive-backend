@@ -28,7 +28,7 @@ def generate_reflection():
         prompt = f"Give a short 2-sentence Catholic reflection for the verse: {verse}"
 
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-3.5-turbo",  # ✅ Switched from gpt-4
             messages=[
                 {"role": "user", "content": prompt}
             ]
